@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Term Operation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; color: #222; background: #fff; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+h1.game-title { font-size: 32px; font-weight: 700; color: #1a5f9e; text-align: center;
+  letter-spacing: 1px; margin-bottom: 1.5rem; text-transform: uppercase; }
+
+.instructions { background: #f5f7fa; border-radius: 10px;
+  padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; font-size: 14px; line-height: 2.1; text-align: center;
+  border: 1px solid #dde3ec; }
+.instructions p { margin-bottom: 2px; }
+.instructions .note { color: #185FA5; font-weight: bold; }
+
+.progress-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 1.5rem; }
+.pdot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; }
+.pdot.done { background: #1D9E75; }
+.pdot.active { background: #378ADD; }
+
+.pron { font-size: 14px; color: #666; text-align: center; margin-bottom: 0.5rem; }
+.instr-line { font-size: 13px; color: #666; text-align: center; margin-bottom: 1rem; }
+
+.letter-row { display: flex; justify-content: center; align-items: stretch;
+  flex-wrap: nowrap; margin-bottom: 1.25rem; }
+
+.lbox { min-width: 32px; height: 56px;
+  border-top: 1.5px solid #aab; border-bottom: 1.5px solid #aab; border-left: 1.5px solid #aab;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: bold; background: #fff; padding: 0 3px; }
+.lbox:last-of-type { border-right: 1.5px solid #aab; }
+
+.gap-zone { width: 14px; height: 56px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; }
+.gap-line { width: 2px; height: 36px; border-radius: 2px; background: transparent; transition: background 0.1s; pointer-events: none; }
+.gap-zone:hover .gap-line { background: #b5d4f4; }
+.gap-zone.active .gap-line { background: #378ADD; }
+
+.feedback { padding: 10px 16px; border-radius: 8px; font-size: 14px;
+  text-align: center; margin-bottom: 1rem; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: #e1f5ee; border: 1px solid #9fe1cb; color: #085041; }
+.feedback.err { background: #fcebeb; border: 1px solid #f7c1c1; color: #791f1f; }
+
+.btn-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+.btn { padding: 9px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;
+  border: 1px solid #aab; cursor: pointer; background: #fff; color: #333; }
+.btn:hover { background: #f0f2f5; }
+.btn-primary { background: #185FA5; border-color: #185FA5; color: #fff; }
+.btn-primary:hover { background: #0C447C; }
+.btn-reset { color: #666; }
+
+.divider { height: 1px; background: #e0e0e0; margin: 1.25rem 0; }
+
+.mc-section { display: none; }
+.mc-section.show { display: block; }
+.mc-instr { font-size: 14px; color: #555; margin-bottom: 1.25rem; text-align: center; }
+
+.part-block { margin-bottom: 1.75rem; }
+.part-label { font-size: 12px; color: #888; text-transform: uppercase;
+  letter-spacing: 0.6px; margin-bottom: 4px; font-weight: bold; }
+.part-word { font-size: 22px; font-weight: bold; margin-bottom: 10px;
+  padding: 8px 0; border-bottom: 1px solid #e0e0e0; color: #185FA5; }
+.mc-opts { display: flex; flex-direction: column; gap: 8px; }
+.mc-opt { padding: 10px 16px; border-radius: 8px; border: 1px solid #ccc;
+  background: #fff; font-size: 14px; cursor: pointer; text-align: left; transition: background 0.1s; }
+.mc-opt:hover:not([disabled]) { background: #f0f2f5; }
+.mc-opt.correct { background: #e1f5ee; border-color: #1D9E75; color: #085041; pointer-events: none; }
+.mc-opt.wrong { background: #fcebeb; border-color: #E24B4A; color: #791f1f; pointer-events: none; }
+.mc-opt.selected-opt { background: #dceefb; border-color: #378ADD; color: #042C53; }
+.mc-opt[disabled] { pointer-events: none; }
+.check-ans-btn { display: block; margin: 10px 0 0 0;
+  padding: 7px 18px; font-size: 13px; font-weight: bold;
+  border-radius: 8px; border: 1px solid #185FA5; background: #185FA5;
+  color: #fff; cursor: pointer; }
+.check-ans-btn:hover { background: #0C447C; }
+.check-ans-btn:disabled { opacity: 0.4; cursor: default; }
+
+.result-section { text-align: center; padding: 1rem 0; }
+.big-pct { font-size: 52px; font-weight: bold; color: #1D9E75; margin-bottom: 6px; }
+.result-msg { font-size: 15px; color: #555; margin-bottom: 1.5rem; }
+.summary { text-align: left; }
+.scard { background: #f5f7fa; border-radius: 10px; padding: 1rem 1.25rem;
+  margin-bottom: 10px; border: 1px solid #dde3ec; }
+.scard h4 { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #185FA5; }
+.scard .smean { font-size: 14px; color: #444; }
+.scard .sbreak { font-size: 13px; color: #666; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h2 class="sr-only" style="position:absolute;left:-9999px;">Medical Term Operation: click between letters to split the term, then identify each part's meaning</h2>
+<h1 class="game-title">Medical Term Operation</h1>
+
+<div class="instructions">
+  <p>In this activity, you will be asked to split a term into its word parts.</p>
+  <p>To do so, hover over the text and click in between the characters where you believe the word parts should be separated.</p>
+  <p class="note">Do not include the split (slash marks) between word roots and combining vowels.</p>
+  <p>If you would like to undo your work, select <strong>Reset Word</strong> to start again.</p>
+  <p>When you are ready, select <strong>Check Answer</strong> to review the correct word parts and move to the next stage.</p>
+  <p>After you have split the term, identify the correct meaning of each word part.</p>
+  <p>When you have identified the meaning, click <strong>Check Answer</strong>.</p>
+</div>
+
+<div class="progress-dots" id="prog"></div>
+<div id="main"></div>
+
+</div>
+
+<script>
+var terms = [
+  {
+    word: "onychomycosis",
+    pronunciation: "on·i·kō·mī·KŌ·sĭs",
+    cutPositions: [6, 11],
+    parts: [
+      { display: "onycho", type: "Combining form", meaning: "nail",
+        options: ["skin", "nail", "fungus", "death"] },
+      { display: "myco", type: "Combining form", meaning: "fungus",
+        options: ["sweat", "hard tissue", "fungus", "nail"] },
+      { display: "-sis", type: "Suffix", meaning: "abnormal condition",
+        options: ["inflammation", "surgical repair", "abnormal condition", "pertaining to"] }
+    ],
+    fullMeaning: "abnormal condition of a fungus in the nails"
+  },
+  {
+    word: "dermatoautoplasty",
+    pronunciation: "dĕr·mă·tō·AW·tō·plăs·tē",
+    cutPositions: [8, 12],
+    parts: [
+      { display: "dermato", type: "Combining form", meaning: "skin",
+        options: ["nail", "skin", "sweat", "wrinkle"] },
+      { display: "auto", type: "Combining form", meaning: "self",
+        options: ["other", "life", "self", "hidden"] },
+      { display: "-plasty", type: "Suffix", meaning: "surgical repair",
+        options: ["surgical repair", "excision", "inflammation", "study of"] }
+    ],
+    fullMeaning: "surgical repair of the skin using one's own skin"
+  },
+  {
+    word: "hidradenitis",
+    pronunciation: "hi·dra·ĕn·ĪT·ĭs",
+    cutPositions: [5, 9],
+    parts: [
+      { display: "hidra", type: "Combining form", meaning: "sweat",
+        options: ["sweat", "skin", "nail", "sebum"] },
+      { display: "den", type: "Combining form", meaning: "gland",
+        options: ["cell", "gland", "vessel", "muscle"] },
+      { display: "-itis", type: "Suffix", meaning: "inflammation",
+        options: ["abnormal condition", "softening", "inflammation", "pertaining to"] }
+    ],
+    fullMeaning: "inflammation of a sweat gland"
+  }
+];
+
+var tIdx = 0;
+var activeCuts = {};
+var splitLocked = false;
+var mcAnswered = {};
+var selectedOpts = {};
+var totalScore = 0;
+var totalPossible = 0;
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function renderProgress() {
+  var html = '';
+  for (var i = 0; i < terms.length; i++) {
+    var cls = i < tIdx ? 'done' : i === tIdx ? 'active' : '';
+    html += '<div class="pdot ' + cls + '"></div>';
+  }
+  document.getElementById('prog').innerHTML = html;
+}
+
+function render() {
+  renderProgress();
+  if (tIdx >= terms.length) { renderFinal(); return; }
+  activeCuts = {};
+  splitLocked = false;
+  mcAnswered = {};
+  selectedOpts = {};
+  renderSplitPhase();
+}
+
+function renderSplitPhase() {
+  var term = terms[tIdx];
+  var letters = term.word.split('');
+  var rowHtml = '';
+  for (var i = 0; i < letters.length; i++) {
+    if (i > 0) {
+      rowHtml += '<div class="gap-zone" id="g' + i + '" onclick="toggleGap(' + i + ')">' +
+        '<div class="gap-line"></div></div>';
+    }
+    rowHtml += '<div class="lbox" id="lb' + i + '">' + letters[i].toUpperCase() + '</div>';
+  }
+
+  document.getElementById('main').innerHTML =
+    '<div class="pron">' + term.pronunciation + '</div>' +
+    '<p class="instr-line">Hover between letters and click to place a split mark</p>' +
+    '<div class="letter-row" id="lrow">' + rowHtml + '</div>' +
+    '<div class="feedback" id="fb"></div>' +
+    '<div class="btn-row">' +
+      '<button class="btn btn-reset" onclick="resetWord()">Reset Word</button>' +
+      '<button class="btn btn-primary" onclick="checkSplit()">Check Answer</button>' +
+    '</div>' +
+    '<div class="divider"></div>' +
+    '<div class="mc-section" id="mcs"></div>';
+}
+
+function toggleGap(i) {
+  if (splitLocked) return;
+  var g = document.getElementById('g' + i);
+  if (activeCuts[i]) {
+    delete activeCuts[i];
+    g.classList.remove('active');
+  } else {
+    activeCuts[i] = true;
+    g.classList.add('active');
+  }
+}
+
+function resetWord() {
+  for (var k in activeCuts) {
+    var g = document.getElementById('g' + k);
+    if (g) g.classList.remove('active');
+  }
+  activeCuts = {};
+  var fb = document.getElementById('fb');
+  fb.className = 'feedback';
+  fb.textContent = '';
+}
+
+function checkSplit() {
+  var term = terms[tIdx];
+  var fb = document.getElementById('fb');
+  var missing = 0, extra = 0;
+
+  for (var i = 0; i < term.cutPositions.length; i++) {
+    if (!activeCuts[term.cutPositions[i]]) missing++;
+  }
+  for (var k in activeCuts) {
+    var found = false;
+    for (var j = 0; j < term.cutPositions.length; j++) {
+      if (term.cutPositions[j] == k) { found = true; break; }
+    }
+    if (!found) extra++;
+  }
+
+  if (missing === 0 && extra === 0) {
+    fb.className = 'feedback ok show';
+    fb.textContent = '\u2713 Correct! Now identify the meaning of each word part below.';
+    splitLocked = true;
+    renderMCPhase(term);
+  } else {
+    fb.className = 'feedback err show';
+    if (extra > 0 && missing > 0) {
+      fb.textContent = 'Not quite \u2014 you have ' + extra + ' extra split' + (extra > 1 ? 's' : '') +
+        ' and ' + missing + ' missing split' + (missing > 1 ? 's' : '') + '. Try again.';
+    } else if (extra > 0) {
+      fb.textContent = 'You have ' + extra + ' too many split' + (extra > 1 ? 's' : '') + '. Try removing one.';
+    } else {
+      fb.textContent = 'You are missing ' + missing + ' split' + (missing > 1 ? 's' : '') + '. Try splitting the term further.';
+    }
+  }
+}
+
+function renderMCPhase(term) {
+  totalPossible += term.parts.length;
+  var html = '<p class="mc-instr">Identify the correct meaning of each part and click <strong>Check Answer</strong>.</p>';
+
+  for (var pi = 0; pi < term.parts.length; pi++) {
+    var p = term.parts[pi];
+    var opts = shuffle(p.options);
+    var optsHtml = '';
+    for (var oi = 0; oi < opts.length; oi++) {
+      var o = opts[oi];
+      var safeO = o.replace(/'/g, "\\'");
+      optsHtml += '<button class="mc-opt" id="opt-' + pi + '-' + oi + '" ' +
+        'onclick="selectOpt(' + pi + ',\'' + safeO + '\',' + oi + ')">' + o + '</button>';
+    }
+    html += '<div class="part-block" id="pb' + pi + '">' +
+      '<div class="part-label">' + p.type + '</div>' +
+      '<div class="part-word">' + p.display + '</div>' +
+      '<div class="mc-opts" id="opts' + pi + '">' + optsHtml + '</div>' +
+      '<button class="check-ans-btn" id="cabtn' + pi + '" onclick="checkMeaning(' + pi + ')">Check Answer</button>' +
+      '<div class="feedback" id="mcfb' + pi + '"></div>' +
+      '</div>';
+  }
+
+  var mcs = document.getElementById('mcs');
+  mcs.innerHTML = html;
+  mcs.classList.add('show');
+}
+
+function selectOpt(pi, val, oi) {
+  var container = document.getElementById('opts' + pi);
+  if (!container) return;
+  var btns = container.querySelectorAll('.mc-opt');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.remove('selected-opt');
+  }
+  var btn = document.getElementById('opt-' + pi + '-' + oi);
+  if (btn) btn.classList.add('selected-opt');
+  selectedOpts[pi] = { val: val, oi: oi };
+}
+
+function checkMeaning(pi) {
+  var term = terms[tIdx];
+  var correct = term.parts[pi].meaning;
+  var fb = document.getElementById('mcfb' + pi);
+  var sel = selectedOpts[pi];
+
+  if (!sel) {
+    fb.className = 'feedback err show';
+    fb.textContent = 'Please select an answer first.';
+    return;
+  }
+
+  var container = document.getElementById('opts' + pi);
+  var btns = container.querySelectorAll('.mc-opt');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.remove('selected-opt');
+    btns[i].setAttribute('disabled', true);
+    if (btns[i].textContent.trim() === correct) btns[i].classList.add('correct');
+  }
+
+  if (sel.val === correct) {
+    totalScore++;
+    fb.className = 'feedback ok show';
+    fb.textContent = '\u2713 Correct! "' + term.parts[pi].display + '" means ' + correct + '.';
+  } else {
+    var wrongBtn = document.getElementById('opt-' + pi + '-' + sel.oi);
+    if (wrongBtn) wrongBtn.classList.add('wrong');
+    fb.className = 'feedback err show';
+    fb.textContent = 'Not quite \u2014 the correct meaning is "' + correct + '".';
+  }
+
+  var cabtn = document.getElementById('cabtn' + pi);
+  if (cabtn) { cabtn.disabled = true; }
+
+  mcAnswered[pi] = true;
+  var answeredCount = 0;
+  for (var k in mcAnswered) answeredCount++;
+  if (answeredCount === term.parts.length) {
+    setTimeout(function() { tIdx++; render(); }, 1200);
+  }
+}
+
+function renderFinal() {
+  var pct = Math.round((totalScore / totalPossible) * 100);
+  var msg = pct >= 80
+    ? 'Excellent! You have a strong grasp of these word parts.'
+    : pct >= 60
+    ? 'Good effort \u2014 review the meanings you missed and try again.'
+    : 'Keep practicing \u2014 break each term carefully, one part at a time.';
+
+  var summaryHtml = '';
+  for (var i = 0; i < terms.length; i++) {
+    var t = terms[i];
+    var bkd = '';
+    for (var j = 0; j < t.parts.length; j++) {
+      if (j > 0) bkd += ' &nbsp;|&nbsp; ';
+      bkd += '<strong>' + t.parts[j].display + '</strong> = ' + t.parts[j].meaning;
+    }
+    summaryHtml += '<div class="scard">' +
+      '<h4>' + t.word + ' <span style="font-size:13px;font-weight:normal;color:#777">' + t.pronunciation + '</span></h4>' +
+      '<div class="smean">' + t.fullMeaning + '</div>' +
+      '<div class="sbreak">' + bkd + '</div>' +
+      '</div>';
+  }
+
+  document.getElementById('main').innerHTML =
+    '<div class="result-section">' +
+    '<div class="big-pct">' + pct + '%</div>' +
+    '<div class="result-msg">' + msg + '<br><span style="font-size:13px;">' + totalScore + ' of ' + totalPossible + ' meanings correct</span></div>' +
+    '<div class="summary">' + summaryHtml + '</div>' +
+    '<button class="btn btn-primary" style="margin-top:1.25rem;" onclick="restart()">Try Again</button>' +
+    '</div>';
+
+  document.getElementById('prog').innerHTML = '<div class="pdot done"></div><div class="pdot done"></div><div class="pdot done"></div>';
+}
+
+function restart() {
+  tIdx = 0; totalScore = 0; totalPossible = 0; selectedOpts = {};
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
