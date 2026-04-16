@@ -6,21 +6,47 @@
 <title>Medical Term Operation</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
 body { font-family: Arial, sans-serif; color: #222; background: #fff; }
-.wrap { max-width: 820px; margin: 0 auto; padding: 1.5rem 1rem; }
-h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: center;
-  letter-spacing: 1px; margin-bottom: 1.25rem; text-transform: uppercase; }
-.instructions { background: #f5f7fa; border-radius: 10px; padding: 1.25rem 1.5rem;
-  margin-bottom: 1.5rem; font-size: 14px; line-height: 2; text-align: center; border: 1px solid #dde3ec; }
-.instructions .note { color: #185FA5; font-weight: bold; }
-.progress-bar-wrap { margin-bottom: 1.25rem; }
-.progress-label { font-size: 13px; color: #888; text-align: center; margin-bottom: 6px; }
-.progress-track { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+
+.screen { display: none; min-height: 100vh; padding: 2rem 1rem; }
+.screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.inner { width: 100%; max-width: 820px; margin: 0 auto; }
+
+/* WELCOME SCREEN */
+.welcome-title { font-size: 34px; font-weight: 700; color: #1a5f9e; text-align: center;
+  letter-spacing: 1px; margin-bottom: 0.5rem; text-transform: uppercase; }
+.welcome-subtitle { font-size: 15px; color: #888; text-align: center; margin-bottom: 2rem; }
+.instructions-box { background: #f5f7fa; border-radius: 12px; padding: 1.5rem 2rem;
+  margin-bottom: 2rem; font-size: 14px; line-height: 2.1; border: 1px solid #dde3ec; }
+.instructions-box p { margin-bottom: 4px; text-align: center; }
+.instructions-box .note { color: #185FA5; font-weight: bold; }
+.instructions-box .step { display: flex; align-items: flex-start; gap: 12px;
+  text-align: left; margin-bottom: 10px; background: #fff; border-radius: 8px;
+  padding: 10px 14px; border: 1px solid #e8ecf2; }
+.step-num { width: 28px; height: 28px; border-radius: 50%; background: #1a5f9e; color: #fff;
+  font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-text { font-size: 14px; color: #333; line-height: 1.6; padding-top: 3px; }
+.start-btn { display: block; margin: 0 auto; padding: 14px 48px; border-radius: 10px;
+  font-size: 18px; font-weight: bold; background: #1a5f9e; color: #fff;
+  border: none; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s; }
+.start-btn:hover { background: #0C447C; }
+
+/* ACTIVITY SCREEN */
+.activity-screen { padding: 1.5rem 1rem; }
+.act-header { display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.25rem; flex-wrap: wrap; gap: 8px; }
+.act-title { font-size: 18px; font-weight: bold; color: #1a5f9e; text-transform: uppercase; letter-spacing: 0.5px; }
+.word-counter { font-size: 13px; color: #888; }
+.progress-track { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 1.5rem; }
 .progress-fill { height: 6px; background: #1a5f9e; border-radius: 3px; transition: width 0.4s; }
+
 .phase-label { font-size: 13px; font-weight: bold; color: #1a5f9e; text-align: center;
-  margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
-.pron { font-size: 14px; color: #888; text-align: center; margin-bottom: 0.5rem; }
+  margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.pron-hint { font-size: 13px; color: #888; text-align: center; margin-bottom: 0.5rem; font-style: italic; }
 .instr-line { font-size: 14px; color: #444; text-align: center; margin-bottom: 1rem; }
+
+/* LETTER ROW */
 .letter-row { display: flex; justify-content: center; align-items: stretch; flex-wrap: nowrap; margin-bottom: 1.25rem; }
 .lbox { min-width: 34px; height: 58px; border-top: 1.5px solid #aab; border-bottom: 1.5px solid #aab;
   border-left: 1.5px solid #aab; display: flex; align-items: center; justify-content: center;
@@ -30,22 +56,23 @@ h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: c
 .gap-line { width: 2px; height: 38px; border-radius: 2px; background: transparent; transition: background 0.1s; pointer-events: none; }
 .gap-zone:hover .gap-line { background: #b5d4f4; }
 .gap-zone.active .gap-line { background: #1a5f9e; }
+
+/* FEEDBACK */
 .feedback { padding: 10px 16px; border-radius: 8px; font-size: 14px; text-align: center; margin-bottom: 1rem; display: none; }
 .feedback.show { display: block; }
 .feedback.ok { background: #e1f5ee; border: 1px solid #9fe1cb; color: #085041; }
 .feedback.err { background: #fcebeb; border: 1px solid #f7c1c1; color: #791f1f; }
-.btn-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+
+.btn-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 0; flex-wrap: wrap; }
 .btn { padding: 9px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;
   border: 1px solid #aab; cursor: pointer; background: #fff; color: #333; }
 .btn:hover { background: #f0f2f5; }
 .btn-primary { background: #1a5f9e; border-color: #1a5f9e; color: #fff; }
 .btn-primary:hover { background: #0C447C; }
 .btn:disabled { opacity: 0.4; cursor: default; }
-.divider { height: 1px; background: #e0e0e0; margin: 1.25rem 0; }
-.mc-section { display: none; }
-.mc-section.show { display: block; }
-.mc-instr { font-size: 14px; color: #555; margin-bottom: 1rem; text-align: center; }
-.parts-row { display: flex; gap: 12px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+
+/* MEANINGS */
+.parts-row { display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
 .part-col { flex: 1; min-width: 140px; border: 1px solid #dde3ec; border-radius: 8px; padding: 12px; background: #f9fafc; }
 .part-col-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: bold; }
 .part-col-word { font-size: 20px; font-weight: bold; color: #1a5f9e; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #e0e0e0; }
@@ -62,55 +89,48 @@ h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: c
 .mc-opt.wrong { background: #fcebeb; border-color: #E24B4A; color: #791f1f; pointer-events: none; }
 .mc-opt.wrong .opt-letter { background: #E24B4A; color: #fff; border-color: #E24B4A; }
 .mc-opt[disabled] { pointer-events: none; }
-.full-meaning { text-align: center; font-size: 17px; margin: 1rem 0; padding: 12px; background: #f0f7ff; border-radius: 8px; display: none; }
+.full-meaning { text-align: center; font-size: 16px; margin: 0.75rem 0;
+  padding: 10px 14px; background: #f0f7ff; border-radius: 8px; display: none; }
 .full-meaning .term-name { color: #1a5f9e; font-weight: bold; }
 
-/* PRONUNCIATION SECTION */
-.pron-section { display: none; }
-.pron-section.show { display: block; }
-.pron-guide { font-size: 24px; font-weight: bold; color: #1a5f9e; text-align: center; margin-bottom: 4px; }
-.pron-syllables { font-size: 15px; color: #666; text-align: center; margin-bottom: 1.5rem; font-style: italic; }
-.pron-instr { font-size: 14px; color: #555; text-align: center; margin-bottom: 1.25rem; }
-
-/* TWO COLUMN LAYOUT FOR RECORD VS CORRECT */
-.pron-columns { display: flex; gap: 16px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+/* PRONUNCIATION */
+.pron-word { font-size: 26px; font-weight: bold; color: #1a5f9e; text-align: center; margin-bottom: 4px; }
+.pron-guide { font-size: 15px; color: #666; text-align: center; margin-bottom: 1.25rem; font-style: italic; }
+.pron-columns { display: flex; gap: 16px; margin-bottom: 1rem; flex-wrap: wrap; }
 .pron-col { flex: 1; min-width: 200px; border: 1px solid #dde3ec; border-radius: 10px;
   padding: 1rem; background: #f9fafc; text-align: center; }
 .pron-col-title { font-size: 13px; font-weight: bold; text-transform: uppercase;
-  letter-spacing: 0.5px; margin-bottom: 12px; color: #555; }
+  letter-spacing: 0.5px; margin-bottom: 12px; }
 .pron-col.your-col { border-color: #b5d4f4; background: #f0f7ff; }
 .pron-col.your-col .pron-col-title { color: #1a5f9e; }
 .pron-col.correct-col { border-color: #9fe1cb; background: #f0faf5; }
 .pron-col.correct-col .pron-col-title { color: #0f6e56; }
-
-.record-btn { width: 64px; height: 64px; border-radius: 50%; border: none;
-  background: #1a5f9e; color: #fff; font-size: 26px; cursor: pointer;
+.record-btn { width: 60px; height: 60px; border-radius: 50%; border: none;
+  background: #1a5f9e; color: #fff; font-size: 24px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.15s; margin: 0 auto 8px; }
 .record-btn:hover { background: #0C447C; }
 .record-btn.recording { background: #E24B4A; animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(226,75,74,0.4)} 50%{box-shadow:0 0 0 12px rgba(226,75,74,0)} }
-
-.speak-btn { width: 64px; height: 64px; border-radius: 50%; border: none;
-  background: #0f6e56; color: #fff; font-size: 26px; cursor: pointer;
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(226,75,74,0.4)} 50%{box-shadow:0 0 0 10px rgba(226,75,74,0)} }
+.speak-btn { width: 60px; height: 60px; border-radius: 50%; border: none;
+  background: #0f6e56; color: #fff; font-size: 24px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.15s; margin: 0 auto 8px; }
 .speak-btn:hover { background: #085041; }
 .speak-btn.speaking { background: #1D9E75; animation: pulse2 1s infinite; }
-@keyframes pulse2 { 0%,100%{box-shadow:0 0 0 0 rgba(29,158,117,0.4)} 50%{box-shadow:0 0 0 12px rgba(29,158,117,0)} }
-
-.col-status { font-size: 12px; color: #888; margin-bottom: 10px; min-height: 18px; }
-.audio-player { width: 100%; margin-top: 8px; border-radius: 6px; display: none; }
-
-.self-check { margin-top: 1rem; padding: 1rem; background: #f5f7fa; border-radius: 10px; border: 1px solid #dde3ec; }
-.self-check p { font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 12px; color: #333; }
+@keyframes pulse2 { 0%,100%{box-shadow:0 0 0 0 rgba(29,158,117,0.4)} 50%{box-shadow:0 0 0 10px rgba(29,158,117,0)} }
+.col-status { font-size: 12px; color: #888; min-height: 16px; margin-bottom: 8px; }
+.audio-player { width: 100%; border-radius: 6px; display: none; margin-top: 6px; }
+.self-check { padding: 1rem; background: #f5f7fa; border-radius: 10px; border: 1px solid #dde3ec; margin-bottom: 1rem; }
+.self-check p { font-size: 14px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .self-check-btns { display: flex; gap: 12px; justify-content: center; }
-.self-check-btn { padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; background: #fff; }
+.self-check-btn { padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; background: #fff; }
 .self-check-btn.yes { border-color: #1D9E75; color: #085041; }
 .self-check-btn.yes:hover { background: #e1f5ee; }
 .self-check-btn.no { border-color: #E24B4A; color: #791f1f; }
 .self-check-btn.no:hover { background: #fcebeb; }
 
+/* RESULTS */
 .result-section { text-align: center; padding: 1rem 0; }
 .big-pct { font-size: 52px; font-weight: bold; color: #1D9E75; margin-bottom: 6px; }
 .result-msg { font-size: 15px; color: #555; margin-bottom: 1.5rem; }
@@ -121,29 +141,60 @@ h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: c
 </style>
 </head>
 <body>
-<div class="wrap">
-<h1 class="game-title">Medical Term Operation</h1>
-<div class="instructions">
-  <p>In this activity, you will be asked to split a term into its word parts.</p>
-  <p>Hover over the text and click in between the characters where you believe the word parts should be separated.</p>
-  <p class="note">Do not include the split (slash marks) between word roots and combining vowels.</p>
-  <p>Select <strong>Reset Word</strong> to start again. Select <strong>Check Answer</strong> when ready.</p>
-  <p>After splitting the term, identify the correct meaning of each word part.</p>
-  <p>Finally, record yourself pronouncing the term, then compare with the correct pronunciation.</p>
+
+<!-- WELCOME SCREEN -->
+<div class="screen active" id="screen-welcome">
+  <div class="inner">
+    <h1 class="welcome-title">Medical Term Operation</h1>
+    <p class="welcome-subtitle">Integumentary System &nbsp;·&nbsp; Chapter 3</p>
+    <div class="instructions-box">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Split the term</strong> — Hover over the letters and click between characters to separate the term into its word parts. Do <strong>not</strong> split between a word root and its combining vowel.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Identify meanings</strong> — Select the correct meaning for each word part from the multiple choice options, then click <strong>Check Answer</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Practice pronunciation</strong> — Record yourself saying the term, then compare with the correct pronunciation using the speaker button.</div>
+      </div>
+      <p style="margin-top:12px; font-size:13px; color:#888;">This activity contains <strong>8 terms</strong> from the Integumentary System.</p>
+    </div>
+    <button class="start-btn" onclick="startActivity()">&#9654; Start Activity</button>
+  </div>
 </div>
-<div class="progress-bar-wrap">
-  <div class="progress-label" id="prog-label">Word 1 of 8</div>
-  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:12%"></div></div>
+
+<!-- ACTIVITY SCREEN -->
+<div class="screen activity-screen" id="screen-activity">
+  <div class="inner">
+    <div class="act-header">
+      <div class="act-title">Medical Term Operation</div>
+      <div class="word-counter" id="word-counter">Word 1 of 8</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:12%"></div></div>
+    <div id="phase-container"></div>
+  </div>
 </div>
-<div id="main"></div>
+
+<!-- RESULTS SCREEN -->
+<div class="screen" id="screen-results">
+  <div class="inner">
+    <div class="result-section">
+      <div class="big-pct" id="final-pct"></div>
+      <div class="result-msg" id="final-msg"></div>
+      <div id="summary-cards"></div>
+      <button class="btn btn-primary" style="margin-top:1.25rem;" onclick="restart()">Try Again</button>
+    </div>
+  </div>
 </div>
 
 <script>
 var LETTERS = ["A","B","C","D"];
 var terms = [
   {
-    word: "onychomycosis",
-    pronunciation: "on·i·kō·mī·KŌ·sĭs",
+    word: "onychomycosis", pronunciation: "on·i·kō·mī·KŌ·sĭs",
     cutPositions: [6, 9],
     parts: [
       { display: "onych/o", type: "Combining form", meaning: "nail", options: ["skin","nail","fungus","death"] },
@@ -153,8 +204,7 @@ var terms = [
     fullMeaning: "abnormal condition of a fungus in the nails"
   },
   {
-    word: "dermatoautoplasty",
-    pronunciation: "dĕr·mă·tō·AW·tō·plăs·tē",
+    word: "dermatoautoplasty", pronunciation: "dĕr·mă·tō·AW·tō·plăs·tē",
     cutPositions: [7, 11],
     parts: [
       { display: "dermat/o", type: "Combining form", meaning: "skin", options: ["nail","skin","sweat","wrinkle"] },
@@ -164,8 +214,7 @@ var terms = [
     fullMeaning: "surgical repair of the skin using one's own skin"
   },
   {
-    word: "hidradenitis",
-    pronunciation: "hi·dra·ĕn·ĪT·ĭs",
+    word: "hidradenitis", pronunciation: "hi·dra·ĕn·ĪT·ĭs",
     cutPositions: [4, 8],
     parts: [
       { display: "hidr", type: "Word root", meaning: "sweat", options: ["sweat","skin","nail","sebum"] },
@@ -175,8 +224,7 @@ var terms = [
     fullMeaning: "inflammation of a sweat gland"
   },
   {
-    word: "dermatoconiosis",
-    pronunciation: "dĕr·mă·tō·kō·nē·Ō·sĭs",
+    word: "dermatoconiosis", pronunciation: "dĕr·mă·tō·kō·nē·Ō·sĭs",
     cutPositions: [7, 11],
     parts: [
       { display: "dermat/o", type: "Combining form", meaning: "skin", options: ["nail","skin","sweat","wrinkle"] },
@@ -186,8 +234,7 @@ var terms = [
     fullMeaning: "abnormal condition of the skin caused by dust"
   },
   {
-    word: "onychocryptosis",
-    pronunciation: "ŏn·ĭ·kō·krip·TŌ·sis",
+    word: "onychocryptosis", pronunciation: "ŏn·ĭ·kō·krip·TŌ·sis",
     cutPositions: [6, 11],
     parts: [
       { display: "onych/o", type: "Combining form", meaning: "nail", options: ["skin","nail","sweat","fungus"] },
@@ -197,8 +244,7 @@ var terms = [
     fullMeaning: "abnormal condition of a hidden nail (ingrown nail)"
   },
   {
-    word: "onychomalacia",
-    pronunciation: "ŏn·ĭ·kō·mă·LĀ·shă",
+    word: "onychomalacia", pronunciation: "ŏn·ĭ·kō·mă·LĀ·shă",
     cutPositions: [6],
     parts: [
       { display: "onych/o", type: "Combining form", meaning: "nail", options: ["skin","nail","wrinkle","sweat"] },
@@ -207,8 +253,7 @@ var terms = [
     fullMeaning: "softening of the nails"
   },
   {
-    word: "pachyderma",
-    pronunciation: "pak·ē·DĔR·mă",
+    word: "pachyderma", pronunciation: "pak·ē·DĔR·mă",
     cutPositions: [5],
     parts: [
       { display: "pachy", type: "Prefix", meaning: "thick", options: ["thick","smooth","dry","hard"] },
@@ -217,8 +262,7 @@ var terms = [
     fullMeaning: "thickening of the skin"
   },
   {
-    word: "rhytidectomy",
-    pronunciation: "rit·ĭ·DEK·tŏ·mē",
+    word: "rhytidectomy", pronunciation: "rit·ĭ·DEK·tŏ·mē",
     cutPositions: [6],
     parts: [
       { display: "rhytid", type: "Word root", meaning: "wrinkles", options: ["wrinkles","skin","dry","thick"] },
@@ -229,43 +273,47 @@ var terms = [
 ];
 
 var tIdx=0, activeCuts={}, splitLocked=false, selectedOpts={}, totalScore=0, totalPossible=0;
-var mediaRecorder=null, audioChunks=[], audioBlob=null, audioUrl=null, isRecording=false;
-var isSpeaking=false;
+var mediaRecorder=null, audioChunks=[], audioUrl=null, isRecording=false, isSpeaking=false;
 
 function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
-function updateProgress(){
-  var label=document.getElementById('prog-label'),fill=document.getElementById('prog-fill');
-  if(tIdx>=terms.length){if(label)label.textContent='Complete!';if(fill)fill.style.width='100%';}
-  else{if(label)label.textContent='Word '+(tIdx+1)+' of '+terms.length;if(fill)fill.style.width=Math.round(((tIdx+1)/terms.length)*100)+'%';}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function render(){
-  updateProgress();
-  if(tIdx>=terms.length){renderFinal();return;}
-  activeCuts={};splitLocked=false;selectedOpts={};
-  audioBlob=null;audioUrl=null;isRecording=false;isSpeaking=false;
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-  renderSplitPhase();
+function startActivity(){
+  tIdx=0;totalScore=0;totalPossible=0;
+  showScreen('screen-activity');
+  renderSplit();
 }
 
-function renderSplitPhase(){
+function updateHeader(){
+  var wc=document.getElementById('word-counter'),pf=document.getElementById('prog-fill');
+  if(wc)wc.textContent='Word '+(tIdx+1)+' of '+terms.length;
+  if(pf)pf.style.width=Math.round(((tIdx+1)/terms.length)*100)+'%';
+}
+
+/* ===== SPLIT PHASE ===== */
+function renderSplit(){
+  activeCuts={};splitLocked=false;
+  updateHeader();
   var term=terms[tIdx],letters=term.word.toUpperCase().split(''),rowHtml='';
   for(var i=0;i<letters.length;i++){
-    if(i>0) rowHtml+='<div class="gap-zone" id="g'+i+'" onclick="toggleGap('+i+')"><div class="gap-line"></div></div>';
+    if(i>0)rowHtml+='<div class="gap-zone" id="g'+i+'" onclick="toggleGap('+i+')"><div class="gap-line"></div></div>';
     rowHtml+='<div class="lbox">'+letters[i]+'</div>';
   }
-  document.getElementById('main').innerHTML=
+  document.getElementById('phase-container').innerHTML=
     '<div class="phase-label">Step 1 \u2014 Split the term into its word parts</div>'+
-    '<div class="pron">'+term.pronunciation+'</div>'+
+    '<div class="pron-hint">'+term.pronunciation+'</div>'+
     '<p class="instr-line">Hover between letters and click to place a split mark</p>'+
     '<div class="letter-row">'+rowHtml+'</div>'+
     '<div class="feedback" id="fb"></div>'+
-    '<div class="btn-row"><button class="btn" onclick="resetWord()">Reset Word</button>'+
-    '<button class="btn btn-primary" onclick="checkSplit()">Check Answer</button></div>'+
-    '<div class="divider"></div>'+
-    '<div class="mc-section" id="mcs"></div>'+
-    '<div class="pron-section" id="prons"></div>';
+    '<div class="btn-row">'+
+      '<button class="btn" onclick="resetWord()">Reset Word</button>'+
+      '<button class="btn btn-primary" onclick="checkSplit()">Check Answer</button>'+
+    '</div>';
 }
 
 function toggleGap(i){
@@ -286,17 +334,22 @@ function checkSplit(){
   for(var i=0;i<term.cutPositions.length;i++){if(!activeCuts[term.cutPositions[i]])missing++;}
   for(var k in activeCuts){var found=false;for(var j=0;j<term.cutPositions.length;j++){if(term.cutPositions[j]==k){found=true;break;}}if(!found)extra++;}
   if(missing===0&&extra===0){
-    fb.className='feedback ok show';fb.textContent='\u2713 Correct! Now identify the meaning of each word part below.';
-    splitLocked=true;renderMCPhase(term);
+    fb.className='feedback ok show';
+    fb.textContent='\u2713 Correct! Moving to meanings...';
+    splitLocked=true;
+    setTimeout(function(){renderMeanings();},800);
   } else {
     fb.className='feedback err show';
-    if(extra>0&&missing>0) fb.textContent='Not quite \u2014 you have '+extra+' extra split'+(extra>1?'s':'')+' and '+missing+' missing split'+(missing>1?'s':'')+'. Try again.';
-    else if(extra>0) fb.textContent='You have '+extra+' too many split'+(extra>1?'s':'')+'. Try removing one.';
+    if(extra>0&&missing>0)fb.textContent='Not quite \u2014 '+extra+' extra split'+(extra>1?'s':'')+' and '+missing+' missing split'+(missing>1?'s':'')+'. Try again.';
+    else if(extra>0)fb.textContent='You have '+extra+' too many split'+(extra>1?'s':'')+'. Try removing one.';
     else fb.textContent='You are missing '+missing+' split'+(missing>1?'s':'')+'. Try splitting the term further.';
   }
 }
 
-function renderMCPhase(term){
+/* ===== MEANINGS PHASE ===== */
+function renderMeanings(){
+  selectedOpts={};
+  var term=terms[tIdx];
   totalPossible+=term.parts.length;
   var colsHtml='';
   for(var pi=0;pi<term.parts.length;pi++){
@@ -310,88 +363,82 @@ function renderMCPhase(term){
       '<div class="part-col-word">'+p.display+'</div>'+
       '<div class="mc-opts" id="opts'+pi+'">'+optsHtml+'</div></div>';
   }
-  var html='<div class="phase-label">Step 2 \u2014 Identify the meaning of each part</div>'+
-    '<p class="mc-instr">Click the correct meaning under each part, then click <strong>Check Answer</strong>.</p>'+
+  document.getElementById('phase-container').innerHTML=
+    '<div class="phase-label">Step 2 \u2014 Identify the meaning of each part</div>'+
+    '<p class="instr-line" style="margin-bottom:0.75rem;">Select the correct meaning under each part, then click <strong>Check Answer</strong>.</p>'+
     '<div class="parts-row">'+colsHtml+'</div>'+
-    '<div class="full-meaning" id="full-meaning"><span class="term-name">'+term.word+'</span>'+
-    ' : <span>'+term.fullMeaning+'</span></div>'+
-    '<div class="btn-row"><button class="btn btn-primary" id="mc-check-btn" onclick="checkAllMeanings()">Check Answer</button></div>'+
-    '<div class="feedback" id="mcfb"></div>';
-  var mcs=document.getElementById('mcs');mcs.innerHTML=html;mcs.classList.add('show');
+    '<div class="full-meaning" id="full-meaning"><span class="term-name">'+term.word+'</span> : '+term.fullMeaning+'</div>'+
+    '<div class="feedback" id="mcfb"></div>'+
+    '<div class="btn-row"><button class="btn btn-primary" id="mc-check-btn" onclick="checkMeanings()">Check Answer</button></div>';
 }
 
 function selectOpt(pi,val,oi){
-  var container=document.getElementById('opts'+pi);if(!container)return;
-  var btns=container.querySelectorAll('.mc-opt');for(var i=0;i<btns.length;i++)btns[i].classList.remove('selected-opt');
+  var c=document.getElementById('opts'+pi);if(!c)return;
+  c.querySelectorAll('.mc-opt').forEach(function(b){b.classList.remove('selected-opt');});
   var btn=document.getElementById('opt-'+pi+'-'+oi);if(btn)btn.classList.add('selected-opt');
   selectedOpts[pi]={val:val,oi:oi};
 }
 
-function checkAllMeanings(){
+function checkMeanings(){
   var term=terms[tIdx],allAnswered=true;
   for(var pi=0;pi<term.parts.length;pi++){if(!selectedOpts[pi]){allAnswered=false;break;}}
   var fb=document.getElementById('mcfb');
-  if(!allAnswered){fb.className='feedback err show';fb.textContent='Please select a meaning for each word part before checking.';return;}
+  if(!allAnswered){fb.className='feedback err show';fb.textContent='Please select a meaning for each word part.';return;}
   var allCorrect=true;
   for(var pi=0;pi<term.parts.length;pi++){
     var correct=term.parts[pi].meaning,sel=selectedOpts[pi];
-    var container=document.getElementById('opts'+pi),btns=container.querySelectorAll('.mc-opt');
-    for(var i=0;i<btns.length;i++){
-      btns[i].setAttribute('disabled',true);btns[i].classList.remove('selected-opt');
-      if(btns[i].textContent.trim().slice(1).trim()===correct)btns[i].classList.add('correct');
-    }
+    var c=document.getElementById('opts'+pi);
+    c.querySelectorAll('.mc-opt').forEach(function(b){
+      b.setAttribute('disabled',true);b.classList.remove('selected-opt');
+      if(b.textContent.trim().slice(1).trim()===correct)b.classList.add('correct');
+    });
     if(sel.val===correct){totalScore++;document.getElementById('opt-'+pi+'-'+sel.oi).classList.add('correct');}
     else{document.getElementById('opt-'+pi+'-'+sel.oi).classList.add('wrong');allCorrect=false;}
   }
   var fm=document.getElementById('full-meaning');if(fm)fm.style.display='block';
   var cb=document.getElementById('mc-check-btn');if(cb){cb.disabled=true;cb.style.opacity='0.4';}
-  if(fb){fb.className=allCorrect?'feedback ok show':'feedback err show';
-    fb.textContent=allCorrect?'\u2713 Excellent! Now practice your pronunciation below.':
-    'Review the correct meanings highlighted above, then practice your pronunciation below.';}
-  setTimeout(function(){renderPronPhase(term);},600);
+  fb.className=allCorrect?'feedback ok show':'feedback err show';
+  fb.textContent=allCorrect?'\u2713 All correct! Moving to pronunciation...':'Review the correct meanings above, then practice pronunciation.';
+  setTimeout(function(){renderPronunciation();},900);
 }
 
-function renderPronPhase(term){
+/* ===== PRONUNCIATION PHASE ===== */
+function renderPronunciation(){
+  audioUrl=null;isRecording=false;isSpeaking=false;
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  var term=terms[tIdx];
   var isLast=tIdx>=terms.length-1;
-  var html='<div class="divider"></div>'+
+  document.getElementById('phase-container').innerHTML=
     '<div class="phase-label">Step 3 \u2014 Practice pronunciation</div>'+
-    '<div class="pron-guide">'+term.word+'</div>'+
-    '<div class="pron-syllables">'+term.pronunciation+'</div>'+
-    '<p class="pron-instr">Record yourself saying the term, then listen to the correct pronunciation to compare.</p>'+
+    '<div class="pron-word">'+term.word+'</div>'+
+    '<div class="pron-guide">'+term.pronunciation+'</div>'+
     '<div class="pron-columns">'+
-
-      /* YOUR RECORDING COLUMN */
       '<div class="pron-col your-col">'+
         '<div class="pron-col-title">&#127908; Your Recording</div>'+
         '<button class="record-btn" id="rec-btn" onclick="toggleRecord()">&#127908;</button>'+
         '<div class="col-status" id="rec-status">Click to record</div>'+
         '<audio class="audio-player" id="your-audio" controls></audio>'+
-        '<div style="margin-top:8px; display:none;" id="rerecord-wrap">'+
-          '<button class="btn" style="font-size:12px; padding:6px 14px;" onclick="reRecord()">Record Again</button>'+
+        '<div style="display:none;margin-top:6px;" id="rerecord-wrap">'+
+          '<button class="btn" style="font-size:12px;padding:5px 12px;" onclick="reRecord()">Record Again</button>'+
         '</div>'+
       '</div>'+
-
-      /* CORRECT PRONUNCIATION COLUMN */
       '<div class="pron-col correct-col">'+
         '<div class="pron-col-title">&#128266; Correct Pronunciation</div>'+
         '<button class="speak-btn" id="speak-btn" onclick="speakTerm()">&#128266;</button>'+
         '<div class="col-status" id="speak-status">Click to hear the correct pronunciation</div>'+
       '</div>'+
-
     '</div>'+
-
     '<div class="self-check" id="self-check" style="display:none;">'+
       '<p>Did you pronounce it correctly?</p>'+
       '<div class="self-check-btns">'+
         '<button class="self-check-btn yes" onclick="pronResult(true)">\u2713 Yes, I got it!</button>'+
         '<button class="self-check-btn no" onclick="pronResult(false)">\u2715 Need more practice</button>'+
-      '</div></div>'+
+      '</div>'+
+    '</div>'+
     '<div class="feedback" id="pronFb"></div>'+
-    '<div class="btn-row" id="next-btn-row" style="display:none; margin-top:1rem;">'+
-      '<button class="btn btn-primary" onclick="nextTerm()">'+(isLast?'See Results':'Next Word &rarr;')+'</button></div>';
-
-  var ps=document.getElementById('prons');ps.innerHTML=html;ps.classList.add('show');
-  setTimeout(function(){ps.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
+    '<div class="btn-row" id="next-btn-row" style="display:none;margin-top:1rem;">'+
+      '<button class="btn btn-primary" onclick="nextTerm()">'+(isLast?'See Results':'Next Word &rarr;')+'</button>'+
+    '</div>';
 }
 
 function toggleRecord(){if(!isRecording)startRecording();else stopRecording();}
@@ -402,8 +449,8 @@ function startRecording(){
     mediaRecorder=new MediaRecorder(stream);
     mediaRecorder.ondataavailable=function(e){if(e.data.size>0)audioChunks.push(e.data);};
     mediaRecorder.onstop=function(){
-      audioBlob=new Blob(audioChunks,{type:'audio/webm'});
-      audioUrl=URL.createObjectURL(audioBlob);
+      var blob=new Blob(audioChunks,{type:'audio/webm'});
+      audioUrl=URL.createObjectURL(blob);
       var audio=document.getElementById('your-audio');
       var rrw=document.getElementById('rerecord-wrap');
       var sc=document.getElementById('self-check');
@@ -413,33 +460,31 @@ function startRecording(){
       stream.getTracks().forEach(function(t){t.stop();});
     };
     mediaRecorder.start();isRecording=true;
-    var btn=document.getElementById('rec-btn'),status=document.getElementById('rec-status');
+    var btn=document.getElementById('rec-btn'),st=document.getElementById('rec-status');
     if(btn){btn.classList.add('recording');btn.innerHTML='&#9632;';}
-    if(status)status.textContent='Recording... click to stop';
+    if(st)st.textContent='Recording... click to stop';
   }).catch(function(){
-    var status=document.getElementById('rec-status');
-    if(status)status.textContent='Microphone access denied. Please allow microphone access in browser settings and refresh.';
+    var st=document.getElementById('rec-status');
+    if(st)st.textContent='Microphone access denied. Please allow access in browser settings and refresh.';
   });
 }
 
 function stopRecording(){
   if(mediaRecorder&&mediaRecorder.state!=='inactive'){
     mediaRecorder.stop();isRecording=false;
-    var btn=document.getElementById('rec-btn'),status=document.getElementById('rec-status');
+    var btn=document.getElementById('rec-btn'),st=document.getElementById('rec-status');
     if(btn){btn.classList.remove('recording');btn.innerHTML='&#127908;';}
-    if(status)status.textContent='Recording complete \u2014 play it back above.';
+    if(st)st.textContent='Done \u2014 play it back above.';
   }
 }
 
 function reRecord(){
-  var audio=document.getElementById('your-audio');
-  var rrw=document.getElementById('rerecord-wrap');
-  var sc=document.getElementById('self-check');
-  var fb=document.getElementById('pronFb');
+  var audio=document.getElementById('your-audio'),rrw=document.getElementById('rerecord-wrap');
+  var sc=document.getElementById('self-check'),fb=document.getElementById('pronFb');
   var nr=document.getElementById('next-btn-row');
   if(audio){audio.src='';audio.style.display='none';}
   if(rrw)rrw.style.display='none';
-  if(sc){sc.style.display='none';var btns=sc.querySelectorAll('button');for(var i=0;i<btns.length;i++)btns[i].disabled=false;}
+  if(sc){sc.style.display='none';sc.querySelectorAll('button').forEach(function(b){b.disabled=false;});}
   if(fb){fb.className='feedback';fb.textContent='';}
   if(nr)nr.style.display='none';
   startRecording();
@@ -447,78 +492,58 @@ function reRecord(){
 
 function speakTerm(){
   if(!window.speechSynthesis){
-    var s=document.getElementById('speak-status');
-    if(s)s.textContent='Text-to-speech not supported in this browser.';
-    return;
+    var s=document.getElementById('speak-status');if(s)s.textContent='Not supported in this browser.';return;
   }
   if(isSpeaking){window.speechSynthesis.cancel();isSpeaking=false;return;}
-  var term=terms[tIdx];
-  var utterance=new SpeechSynthesisUtterance(term.word);
-  utterance.lang='en-US';
-  utterance.rate=0.85;
-  utterance.pitch=1;
-
-  var btn=document.getElementById('speak-btn');
-  var status=document.getElementById('speak-status');
-
-  utterance.onstart=function(){
-    isSpeaking=true;
-    if(btn){btn.classList.add('speaking');btn.innerHTML='&#9632;';}
-    if(status)status.textContent='Playing... click to stop';
-  };
-  utterance.onend=function(){
-    isSpeaking=false;
-    if(btn){btn.classList.remove('speaking');btn.innerHTML='&#128266;';}
-    if(status)status.textContent='Click to hear again';
-  };
-  utterance.onerror=function(){
-    isSpeaking=false;
-    if(btn){btn.classList.remove('speaking');btn.innerHTML='&#128266;';}
-    if(status)status.textContent='Click to hear the correct pronunciation';
-  };
-  window.speechSynthesis.speak(utterance);
+  var utt=new SpeechSynthesisUtterance(terms[tIdx].word);
+  utt.lang='en-US';utt.rate=0.85;utt.pitch=1;
+  var btn=document.getElementById('speak-btn'),st=document.getElementById('speak-status');
+  utt.onstart=function(){isSpeaking=true;if(btn){btn.classList.add('speaking');btn.innerHTML='&#9632;';}if(st)st.textContent='Playing... click to stop';};
+  utt.onend=function(){isSpeaking=false;if(btn){btn.classList.remove('speaking');btn.innerHTML='&#128266;';}if(st)st.textContent='Click to hear again';};
+  utt.onerror=function(){isSpeaking=false;if(btn){btn.classList.remove('speaking');btn.innerHTML='&#128266;';}};
+  window.speechSynthesis.speak(utt);
 }
 
 function pronResult(correct){
-  var fb=document.getElementById('pronFb'),nr=document.getElementById('next-btn-row'),sc=document.getElementById('self-check');
-  if(sc){var btns=sc.querySelectorAll('.self-check-btn');for(var i=0;i<btns.length;i++)btns[i].disabled=true;}
+  var fb=document.getElementById('pronFb'),nr=document.getElementById('next-btn-row');
+  var sc=document.getElementById('self-check');
+  if(sc)sc.querySelectorAll('.self-check-btn').forEach(function(b){b.disabled=true;});
   if(fb){fb.className=correct?'feedback ok show':'feedback err show';
-    fb.textContent=correct?'\u2713 Great work! Move on to the next term.':
-    'Keep practicing! Click the speaker button to hear the correct pronunciation again: '+terms[tIdx].pronunciation;}
+    fb.textContent=correct?'\u2713 Great work!':'Keep practicing! Click the speaker button to hear the correct pronunciation again.';}
   if(nr)nr.style.display='flex';
 }
 
 function nextTerm(){
   if(window.speechSynthesis)window.speechSynthesis.cancel();
-  tIdx++;render();window.scrollTo({top:0,behavior:'smooth'});
+  tIdx++;
+  if(tIdx>=terms.length){renderResults();}
+  else{renderSplit();}
 }
 
-function renderFinal(){
+/* ===== RESULTS ===== */
+function renderResults(){
   var pct=Math.round((totalScore/totalPossible)*100);
   var msg=pct>=80?'Excellent! You have a strong grasp of these word parts.':
     pct>=60?'Good effort \u2014 review the meanings you missed and try again.':
     'Keep practicing \u2014 break each term carefully, one part at a time.';
-  var summaryHtml='';
+  document.getElementById('final-pct').textContent=pct+'%';
+  document.getElementById('final-msg').innerHTML=msg+'<br><span style="font-size:13px;">'+totalScore+' of '+totalPossible+' meanings correct</span>';
+  var html='';
   for(var i=0;i<terms.length;i++){
     var t=terms[i],bkd='';
     for(var j=0;j<t.parts.length;j++){if(j>0)bkd+=' &nbsp;|&nbsp; ';bkd+='<strong>'+t.parts[j].display+'</strong> = '+t.parts[j].meaning;}
-    summaryHtml+='<div class="scard"><h4>'+t.word+' <span style="font-size:13px;font-weight:normal;color:#777">'+t.pronunciation+'</span></h4>'+
+    html+='<div class="scard"><h4>'+t.word+' <span style="font-size:13px;font-weight:normal;color:#777">'+t.pronunciation+'</span></h4>'+
       '<div class="smean">'+t.fullMeaning+'</div><div class="sbreak">'+bkd+'</div></div>';
   }
-  document.getElementById('main').innerHTML='<div class="result-section">'+
-    '<div class="big-pct">'+pct+'%</div>'+
-    '<div class="result-msg">'+msg+'<br><span style="font-size:13px;">'+totalScore+' of '+totalPossible+' meanings correct</span></div>'+
-    '<div style="text-align:left;">'+summaryHtml+'</div>'+
-    '<button class="btn btn-primary" style="margin-top:1.25rem;" onclick="restart()">Try Again</button></div>';
+  document.getElementById('summary-cards').innerHTML=html;
+  showScreen('screen-results');
 }
 
 function restart(){
   if(window.speechSynthesis)window.speechSynthesis.cancel();
-  tIdx=0;totalScore=0;totalPossible=0;selectedOpts={};audioBlob=null;audioUrl=null;
-  render();window.scrollTo({top:0,behavior:'smooth'});
+  tIdx=0;totalScore=0;totalPossible=0;selectedOpts={};audioUrl=null;
+  showScreen('screen-welcome');
 }
-
-render();
 </script>
 </body>
 </html>
