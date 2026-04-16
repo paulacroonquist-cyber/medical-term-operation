@@ -64,27 +64,53 @@ h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: c
 .mc-opt[disabled] { pointer-events: none; }
 .full-meaning { text-align: center; font-size: 17px; margin: 1rem 0; padding: 12px; background: #f0f7ff; border-radius: 8px; display: none; }
 .full-meaning .term-name { color: #1a5f9e; font-weight: bold; }
+
+/* PRONUNCIATION SECTION */
 .pron-section { display: none; }
 .pron-section.show { display: block; }
-.pron-guide { font-size: 22px; font-weight: bold; color: #1a5f9e; text-align: center; margin-bottom: 6px; }
-.pron-syllables { font-size: 14px; color: #888; text-align: center; margin-bottom: 1.25rem; }
-.pron-instr { font-size: 14px; color: #555; text-align: center; margin-bottom: 1rem; }
-.record-area { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
-.record-btn { width: 70px; height: 70px; border-radius: 50%; border: none; background: #1a5f9e; color: #fff;
-  font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.pron-guide { font-size: 24px; font-weight: bold; color: #1a5f9e; text-align: center; margin-bottom: 4px; }
+.pron-syllables { font-size: 15px; color: #666; text-align: center; margin-bottom: 1.5rem; font-style: italic; }
+.pron-instr { font-size: 14px; color: #555; text-align: center; margin-bottom: 1.25rem; }
+
+/* TWO COLUMN LAYOUT FOR RECORD VS CORRECT */
+.pron-columns { display: flex; gap: 16px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.pron-col { flex: 1; min-width: 200px; border: 1px solid #dde3ec; border-radius: 10px;
+  padding: 1rem; background: #f9fafc; text-align: center; }
+.pron-col-title { font-size: 13px; font-weight: bold; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 12px; color: #555; }
+.pron-col.your-col { border-color: #b5d4f4; background: #f0f7ff; }
+.pron-col.your-col .pron-col-title { color: #1a5f9e; }
+.pron-col.correct-col { border-color: #9fe1cb; background: #f0faf5; }
+.pron-col.correct-col .pron-col-title { color: #0f6e56; }
+
+.record-btn { width: 64px; height: 64px; border-radius: 50%; border: none;
+  background: #1a5f9e; color: #fff; font-size: 26px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s; margin: 0 auto 8px; }
 .record-btn:hover { background: #0C447C; }
 .record-btn.recording { background: #E24B4A; animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(226,75,74,0.4)} 50%{box-shadow:0 0 0 12px rgba(226,75,74,0)} }
-.record-status { font-size: 13px; color: #888; }
-.playback-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
-.self-check { margin-top: 1rem; }
-.self-check p { font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+
+.speak-btn { width: 64px; height: 64px; border-radius: 50%; border: none;
+  background: #0f6e56; color: #fff; font-size: 26px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s; margin: 0 auto 8px; }
+.speak-btn:hover { background: #085041; }
+.speak-btn.speaking { background: #1D9E75; animation: pulse2 1s infinite; }
+@keyframes pulse2 { 0%,100%{box-shadow:0 0 0 0 rgba(29,158,117,0.4)} 50%{box-shadow:0 0 0 12px rgba(29,158,117,0)} }
+
+.col-status { font-size: 12px; color: #888; margin-bottom: 10px; min-height: 18px; }
+.audio-player { width: 100%; margin-top: 8px; border-radius: 6px; display: none; }
+
+.self-check { margin-top: 1rem; padding: 1rem; background: #f5f7fa; border-radius: 10px; border: 1px solid #dde3ec; }
+.self-check p { font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 12px; color: #333; }
 .self-check-btns { display: flex; gap: 12px; justify-content: center; }
 .self-check-btn { padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; background: #fff; }
 .self-check-btn.yes { border-color: #1D9E75; color: #085041; }
 .self-check-btn.yes:hover { background: #e1f5ee; }
 .self-check-btn.no { border-color: #E24B4A; color: #791f1f; }
 .self-check-btn.no:hover { background: #fcebeb; }
+
 .result-section { text-align: center; padding: 1rem 0; }
 .big-pct { font-size: 52px; font-weight: bold; color: #1D9E75; margin-bottom: 6px; }
 .result-msg { font-size: 15px; color: #555; margin-bottom: 1.5rem; }
@@ -103,7 +129,7 @@ h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: c
   <p class="note">Do not include the split (slash marks) between word roots and combining vowels.</p>
   <p>Select <strong>Reset Word</strong> to start again. Select <strong>Check Answer</strong> when ready.</p>
   <p>After splitting the term, identify the correct meaning of each word part.</p>
-  <p>Finally, record yourself pronouncing the term and check your pronunciation.</p>
+  <p>Finally, record yourself pronouncing the term, then compare with the correct pronunciation.</p>
 </div>
 <div class="progress-bar-wrap">
   <div class="progress-label" id="prog-label">Word 1 of 8</div>
@@ -111,6 +137,7 @@ h1.game-title { font-size: 30px; font-weight: 700; color: #1a5f9e; text-align: c
 </div>
 <div id="main"></div>
 </div>
+
 <script>
 var LETTERS = ["A","B","C","D"];
 var terms = [
@@ -203,11 +230,12 @@ var terms = [
 
 var tIdx=0, activeCuts={}, splitLocked=false, selectedOpts={}, totalScore=0, totalPossible=0;
 var mediaRecorder=null, audioChunks=[], audioBlob=null, audioUrl=null, isRecording=false;
+var isSpeaking=false;
 
 function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
 function updateProgress(){
-  var label=document.getElementById('prog-label'), fill=document.getElementById('prog-fill');
+  var label=document.getElementById('prog-label'),fill=document.getElementById('prog-fill');
   if(tIdx>=terms.length){if(label)label.textContent='Complete!';if(fill)fill.style.width='100%';}
   else{if(label)label.textContent='Word '+(tIdx+1)+' of '+terms.length;if(fill)fill.style.width=Math.round(((tIdx+1)/terms.length)*100)+'%';}
 }
@@ -215,12 +243,14 @@ function updateProgress(){
 function render(){
   updateProgress();
   if(tIdx>=terms.length){renderFinal();return;}
-  activeCuts={};splitLocked=false;selectedOpts={};audioBlob=null;audioUrl=null;isRecording=false;
+  activeCuts={};splitLocked=false;selectedOpts={};
+  audioBlob=null;audioUrl=null;isRecording=false;isSpeaking=false;
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
   renderSplitPhase();
 }
 
 function renderSplitPhase(){
-  var term=terms[tIdx], letters=term.word.toUpperCase().split(''), rowHtml='';
+  var term=terms[tIdx],letters=term.word.toUpperCase().split(''),rowHtml='';
   for(var i=0;i<letters.length;i++){
     if(i>0) rowHtml+='<div class="gap-zone" id="g'+i+'" onclick="toggleGap('+i+')"><div class="gap-line"></div></div>';
     rowHtml+='<div class="lbox">'+letters[i]+'</div>';
@@ -316,7 +346,7 @@ function checkAllMeanings(){
   var fm=document.getElementById('full-meaning');if(fm)fm.style.display='block';
   var cb=document.getElementById('mc-check-btn');if(cb){cb.disabled=true;cb.style.opacity='0.4';}
   if(fb){fb.className=allCorrect?'feedback ok show':'feedback err show';
-    fb.textContent=allCorrect?'\u2713 Excellent! All meanings correct. Now practice your pronunciation below.':
+    fb.textContent=allCorrect?'\u2713 Excellent! Now practice your pronunciation below.':
     'Review the correct meanings highlighted above, then practice your pronunciation below.';}
   setTimeout(function(){renderPronPhase(term);},600);
 }
@@ -327,12 +357,29 @@ function renderPronPhase(term){
     '<div class="phase-label">Step 3 \u2014 Practice pronunciation</div>'+
     '<div class="pron-guide">'+term.word+'</div>'+
     '<div class="pron-syllables">'+term.pronunciation+'</div>'+
-    '<p class="pron-instr">Click the microphone to record yourself, then play back and check your pronunciation.</p>'+
-    '<div class="record-area">'+
-      '<button class="record-btn" id="rec-btn" onclick="toggleRecord()">&#127908;</button>'+
-      '<div class="record-status" id="rec-status">Click to record</div>'+
+    '<p class="pron-instr">Record yourself saying the term, then listen to the correct pronunciation to compare.</p>'+
+    '<div class="pron-columns">'+
+
+      /* YOUR RECORDING COLUMN */
+      '<div class="pron-col your-col">'+
+        '<div class="pron-col-title">&#127908; Your Recording</div>'+
+        '<button class="record-btn" id="rec-btn" onclick="toggleRecord()">&#127908;</button>'+
+        '<div class="col-status" id="rec-status">Click to record</div>'+
+        '<audio class="audio-player" id="your-audio" controls></audio>'+
+        '<div style="margin-top:8px; display:none;" id="rerecord-wrap">'+
+          '<button class="btn" style="font-size:12px; padding:6px 14px;" onclick="reRecord()">Record Again</button>'+
+        '</div>'+
+      '</div>'+
+
+      /* CORRECT PRONUNCIATION COLUMN */
+      '<div class="pron-col correct-col">'+
+        '<div class="pron-col-title">&#128266; Correct Pronunciation</div>'+
+        '<button class="speak-btn" id="speak-btn" onclick="speakTerm()">&#128266;</button>'+
+        '<div class="col-status" id="speak-status">Click to hear the correct pronunciation</div>'+
+      '</div>'+
+
     '</div>'+
-    '<div class="playback-row" id="playback-row"></div>'+
+
     '<div class="self-check" id="self-check" style="display:none;">'+
       '<p>Did you pronounce it correctly?</p>'+
       '<div class="self-check-btns">'+
@@ -340,8 +387,9 @@ function renderPronPhase(term){
         '<button class="self-check-btn no" onclick="pronResult(false)">\u2715 Need more practice</button>'+
       '</div></div>'+
     '<div class="feedback" id="pronFb"></div>'+
-    '<div class="btn-row" id="next-btn-row" style="display:none;">'+
+    '<div class="btn-row" id="next-btn-row" style="display:none; margin-top:1rem;">'+
       '<button class="btn btn-primary" onclick="nextTerm()">'+(isLast?'See Results':'Next Word &rarr;')+'</button></div>';
+
   var ps=document.getElementById('prons');ps.innerHTML=html;ps.classList.add('show');
   setTimeout(function(){ps.scrollIntoView({behavior:'smooth',block:'nearest'});},200);
 }
@@ -356,7 +404,12 @@ function startRecording(){
     mediaRecorder.onstop=function(){
       audioBlob=new Blob(audioChunks,{type:'audio/webm'});
       audioUrl=URL.createObjectURL(audioBlob);
-      showPlayback();
+      var audio=document.getElementById('your-audio');
+      var rrw=document.getElementById('rerecord-wrap');
+      var sc=document.getElementById('self-check');
+      if(audio){audio.src=audioUrl;audio.style.display='block';}
+      if(rrw)rrw.style.display='block';
+      if(sc)sc.style.display='block';
       stream.getTracks().forEach(function(t){t.stop();});
     };
     mediaRecorder.start();isRecording=true;
@@ -365,7 +418,7 @@ function startRecording(){
     if(status)status.textContent='Recording... click to stop';
   }).catch(function(){
     var status=document.getElementById('rec-status');
-    if(status)status.textContent='Microphone access denied. Please allow microphone access in your browser settings, then refresh the page.';
+    if(status)status.textContent='Microphone access denied. Please allow microphone access in browser settings and refresh.';
   });
 }
 
@@ -374,23 +427,56 @@ function stopRecording(){
     mediaRecorder.stop();isRecording=false;
     var btn=document.getElementById('rec-btn'),status=document.getElementById('rec-status');
     if(btn){btn.classList.remove('recording');btn.innerHTML='&#127908;';}
-    if(status)status.textContent='Recording complete. Play it back below.';
+    if(status)status.textContent='Recording complete \u2014 play it back above.';
   }
 }
 
-function showPlayback(){
-  var row=document.getElementById('playback-row'),sc=document.getElementById('self-check');
-  if(row)row.innerHTML='<audio controls src="'+audioUrl+'" style="border-radius:8px;"></audio>'+
-    '<button class="btn" onclick="reRecord()" style="margin-left:8px;">&#127908; Record Again</button>';
-  if(sc)sc.style.display='block';
-}
-
 function reRecord(){
-  var sc=document.getElementById('self-check'),fb=document.getElementById('pronFb'),nr=document.getElementById('next-btn-row');
+  var audio=document.getElementById('your-audio');
+  var rrw=document.getElementById('rerecord-wrap');
+  var sc=document.getElementById('self-check');
+  var fb=document.getElementById('pronFb');
+  var nr=document.getElementById('next-btn-row');
+  if(audio){audio.src='';audio.style.display='none';}
+  if(rrw)rrw.style.display='none';
   if(sc){sc.style.display='none';var btns=sc.querySelectorAll('button');for(var i=0;i<btns.length;i++)btns[i].disabled=false;}
   if(fb){fb.className='feedback';fb.textContent='';}
   if(nr)nr.style.display='none';
   startRecording();
+}
+
+function speakTerm(){
+  if(!window.speechSynthesis){
+    var s=document.getElementById('speak-status');
+    if(s)s.textContent='Text-to-speech not supported in this browser.';
+    return;
+  }
+  if(isSpeaking){window.speechSynthesis.cancel();isSpeaking=false;return;}
+  var term=terms[tIdx];
+  var utterance=new SpeechSynthesisUtterance(term.word);
+  utterance.lang='en-US';
+  utterance.rate=0.85;
+  utterance.pitch=1;
+
+  var btn=document.getElementById('speak-btn');
+  var status=document.getElementById('speak-status');
+
+  utterance.onstart=function(){
+    isSpeaking=true;
+    if(btn){btn.classList.add('speaking');btn.innerHTML='&#9632;';}
+    if(status)status.textContent='Playing... click to stop';
+  };
+  utterance.onend=function(){
+    isSpeaking=false;
+    if(btn){btn.classList.remove('speaking');btn.innerHTML='&#128266;';}
+    if(status)status.textContent='Click to hear again';
+  };
+  utterance.onerror=function(){
+    isSpeaking=false;
+    if(btn){btn.classList.remove('speaking');btn.innerHTML='&#128266;';}
+    if(status)status.textContent='Click to hear the correct pronunciation';
+  };
+  window.speechSynthesis.speak(utterance);
 }
 
 function pronResult(correct){
@@ -398,11 +484,14 @@ function pronResult(correct){
   if(sc){var btns=sc.querySelectorAll('.self-check-btn');for(var i=0;i<btns.length;i++)btns[i].disabled=true;}
   if(fb){fb.className=correct?'feedback ok show':'feedback err show';
     fb.textContent=correct?'\u2713 Great work! Move on to the next term.':
-    'Keep practicing! The pronunciation guide is: '+terms[tIdx].pronunciation;}
+    'Keep practicing! Click the speaker button to hear the correct pronunciation again: '+terms[tIdx].pronunciation;}
   if(nr)nr.style.display='flex';
 }
 
-function nextTerm(){tIdx++;render();window.scrollTo({top:0,behavior:'smooth'});}
+function nextTerm(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  tIdx++;render();window.scrollTo({top:0,behavior:'smooth'});
+}
 
 function renderFinal(){
   var pct=Math.round((totalScore/totalPossible)*100);
@@ -423,7 +512,11 @@ function renderFinal(){
     '<button class="btn btn-primary" style="margin-top:1.25rem;" onclick="restart()">Try Again</button></div>';
 }
 
-function restart(){tIdx=0;totalScore=0;totalPossible=0;selectedOpts={};audioBlob=null;audioUrl=null;render();window.scrollTo({top:0,behavior:'smooth'});}
+function restart(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  tIdx=0;totalScore=0;totalPossible=0;selectedOpts={};audioBlob=null;audioUrl=null;
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
 
 render();
 </script>
