@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abbreviation Remedy – Respiratory System</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Nunito', Arial, sans-serif; color: #222; background: #f0f7ff;
+  background-image: radial-gradient(circle at 20% 20%, #dbeafe 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, #fce7f3 0%, transparent 50%); }
+
+.screen { display: none; min-height: 100vh; padding: 2rem 1rem; }
+.screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.inner { width: 100%; max-width: 860px; margin: 0 auto; }
+
+.welcome-title {
+  font-size: 38px; font-weight: 900; text-align: center; letter-spacing: 1px;
+  margin-bottom: 4px; text-transform: uppercase;
+  background: linear-gradient(135deg, #1a5f9e, #7c3aed, #db2777);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.welcome-subtitle { font-size: 15px; color: #6b7280; text-align: center; margin-bottom: 2rem; font-weight: 600; }
+
+.instructions-box { background: #fff; border-radius: 20px; padding: 1.5rem 2rem;
+  margin-bottom: 2rem; border: 2px solid #e5e7eb; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+.step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px;
+  background: #f9fafb; border-radius: 12px; padding: 12px 16px; border: 1.5px solid #e5e7eb; }
+.step-num { width: 32px; height: 32px; border-radius: 50%; color: #fff;
+  font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step:nth-child(1) .step-num { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.step:nth-child(2) .step-num { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.step:nth-child(3) .step-num { background: linear-gradient(135deg, #ec4899, #db2777); }
+.step-text { font-size: 14px; color: #374151; line-height: 1.6; padding-top: 5px; }
+
+.start-btn { display: block; margin: 0 auto; padding: 16px 52px; border-radius: 50px;
+  font-size: 18px; font-weight: 800; border: none; cursor: pointer;
+  background: linear-gradient(135deg, #1a5f9e, #7c3aed); color: #fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.35); transition: transform 0.15s, box-shadow 0.15s;
+  font-family: 'Nunito', sans-serif; }
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
+
+.activity-screen { padding: 1.5rem 1rem; justify-content: flex-start !important; }
+.act-header { display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+.act-title { font-size: 18px; font-weight: 900; text-transform: uppercase;
+  background: linear-gradient(135deg, #1a5f9e, #7c3aed);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.word-counter { font-size: 13px; color: #6b7280; font-weight: 700; }
+
+.progress-track { height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; margin-bottom: 1rem; }
+.progress-fill { height: 10px; border-radius: 5px; transition: width 0.4s;
+  background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899); }
+
+.streak-bar { display: flex; justify-content: flex-end; gap: 4px; margin-bottom: 1rem; min-height: 20px; }
+.streak-dot { width: 16px; height: 16px; border-radius: 50%; background: #e5e7eb; transition: background 0.3s; }
+.streak-dot.correct { background: #22c55e; }
+.streak-dot.wrong { background: #ef4444; }
+
+.abbr-wrap { text-align: center; margin-bottom: 1.25rem; }
+.abbr-label { font-size: 12px; font-weight: 800; color: #7c3aed; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.abbr-box { display: inline-block; padding: 12px 36px; border-radius: 16px;
+  font-size: 30px; font-weight: 900; letter-spacing: 3px;
+  background: linear-gradient(135deg, #1a5f9e, #7c3aed); color: #fff;
+  box-shadow: 0 6px 24px rgba(26,95,158,0.3);
+  animation: pop-in 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pop-in { from{transform:scale(0.7);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+.instr-line { font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 1.25rem; font-weight: 600; }
+
+.pill-area { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+.pill { width: 80px; height: 34px; border-radius: 17px; cursor: grab;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; color: #fff; user-select: none;
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  box-shadow: 0 4px 16px rgba(239,68,68,0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: wiggle 2s ease-in-out infinite; }
+@keyframes wiggle { 0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);} }
+.pill::before { content:''; position:absolute; left:50%; top:0; bottom:0;
+  width:3px; background:rgba(255,255,255,0.4); transform:translateX(-50%); }
+.pill:hover { transform:scale(1.12) rotate(0deg)!important; box-shadow:0 8px 24px rgba(239,68,68,0.5); animation:none; }
+.pill.dragging { opacity:0.5; cursor:grabbing; animation:none; }
+.pill.placed { opacity:0; pointer-events:none; animation:none; }
+
+.jars-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.25rem; }
+.jar-wrap { display:flex; flex-direction:column; align-items:center; cursor:pointer; }
+.jar-drop { width:100%; min-height:70px; border-radius:10px 10px 0 0;
+  border:2.5px dashed #d1d5db; display:flex; align-items:center; justify-content:center;
+  padding:8px; transition:all 0.2s; background:rgba(255,255,255,0.6); }
+.jar-drop.drag-over { background:#ede9fe; border-color:#7c3aed; border-style:solid; transform:scale(1.05); }
+.jar-drop.correct-drop { background:#dcfce7; border-color:#22c55e; border-style:solid; }
+.jar-drop.wrong-drop { background:#fee2e2; border-color:#ef4444; border-style:solid; }
+.dropped-pill { width:58px; height:26px; border-radius:13px;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:900; color:#fff; position:relative; overflow:hidden; }
+.dropped-pill::before { content:''; position:absolute; left:50%; top:0; bottom:0;
+  width:2px; background:rgba(255,255,255,0.4); transform:translateX(-50%); }
+.jar-svg { width:100%; max-width:100px; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.12)); }
+.jar-label { font-size:11.5px; color:#374151; text-align:center; margin-top:6px;
+  line-height:1.4; min-height:36px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; padding:0 4px; }
+
+.feedback { padding:12px 18px; border-radius:12px; font-size:14px; font-weight:700;
+  text-align:center; margin-bottom:1rem; display:none; }
+.feedback.show { display:block; animation:slide-up 0.25s ease; }
+@keyframes slide-up { from{transform:translateY(8px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+.feedback.ok { background:#dcfce7; border:2px solid #86efac; color:#166534; }
+.feedback.err { background:#fee2e2; border:2px solid #fca5a5; color:#991b1b; }
+
+.btn-row { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+.btn { padding:10px 26px; border-radius:50px; font-size:14px; font-weight:800;
+  border:2px solid #d1d5db; cursor:pointer; background:#fff; color:#374151;
+  transition:all 0.15s; font-family:'Nunito',sans-serif; }
+.btn:hover { background:#f3f4f6; }
+.btn-primary { background:linear-gradient(135deg,#1a5f9e,#7c3aed); border:none; color:#fff;
+  box-shadow:0 4px 14px rgba(124,58,237,0.3); }
+.btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(124,58,237,0.4); }
+
+.confetti-wrap { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; }
+.confetti-piece { position:absolute; width:10px; height:10px; border-radius:2px;
+  animation:confetti-fall 1s ease-out forwards; }
+@keyframes confetti-fall { 0%{transform:translateY(0) rotate(0deg);opacity:1;} 100%{transform:translateY(220px) rotate(720deg);opacity:0;} }
+
+.result-section { text-align:center; padding:1rem 0; }
+.big-pct { font-size:64px; font-weight:900; margin-bottom:6px;
+  background:linear-gradient(135deg,#22c55e,#3b82f6);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.result-msg { font-size:15px; color:#4b5563; margin-bottom:1.5rem; font-weight:600; }
+.emoji-result { font-size:56px; margin-bottom:12px; }
+.scard { background:#fff; border-radius:12px; padding:12px 18px; margin-bottom:8px;
+  border:2px solid #e5e7eb; text-align:left; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.scard h4 { font-size:17px; font-weight:900; margin-bottom:3px; color:#7c3aed; }
+.scard .smean { font-size:14px; color:#374151; font-weight:600; }
+
+@media (max-width:600px) {
+  .jars-row { grid-template-columns:repeat(2,1fr); }
+  .abbr-box { font-size:22px; padding:10px 24px; }
+  .welcome-title { font-size:26px; }
+}
+</style>
+</head>
+<body>
+
+<div class="screen active" id="screen-welcome">
+  <div class="inner">
+    <div style="text-align:center;font-size:52px;margin-bottom:8px;">💊</div>
+    <h1 class="welcome-title">Abbreviation Remedy</h1>
+    <p class="welcome-subtitle">Respiratory System &nbsp;·&nbsp; Chapter 4</p>
+    <div class="instructions-box">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Read the abbreviation</strong> — A respiratory system abbreviation appears at the top of the screen.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Drag the pill</strong> — Drag the 💊 pill to the jar that contains the correct meaning. You can also tap a jar directly!</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Check your answer</strong> — Click <strong>Check Answer</strong> to find out if you're right!</div>
+      </div>
+      <p style="margin-top:12px;font-size:13px;color:#6b7280;text-align:center;font-weight:600;">This activity contains <strong style="color:#7c3aed;">36 abbreviations</strong> from the Respiratory System.</p>
+    </div>
+    <button class="start-btn" onclick="startActivity()">💊 Start Activity</button>
+  </div>
+</div>
+
+<div class="screen activity-screen" id="screen-activity">
+  <div class="inner">
+    <div class="act-header">
+      <div class="act-title">💊 Abbreviation Remedy</div>
+      <div class="word-counter" id="word-counter">Question 1 of 36</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:3%"></div></div>
+    <div class="streak-bar" id="streak-bar"></div>
+    <div id="phase-container"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-results">
+  <div class="inner">
+    <div class="result-section">
+      <div class="emoji-result" id="result-emoji">🎉</div>
+      <div class="big-pct" id="final-pct"></div>
+      <div class="result-msg" id="final-msg"></div>
+      <div id="summary-cards"></div>
+      <button class="btn btn-primary" style="margin-top:1.25rem;" onclick="restart()">🔄 Try Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var terms=[
+  {abbr:"ABGs",  meaning:"arterial blood gases",                   distractors:["acid-fast bacilli","acute breathing guidelines","airway blood gauges"]},
+  {abbr:"AFB",   meaning:"acid-fast bacilli",                      distractors:["arterial blood gases","airway flow breathing","acute fibrotic bronchitis"]},
+  {abbr:"ARDS",  meaning:"acute respiratory distress syndrome",    distractors:["airway resistance disease syndrome","arterial respiratory disorder set","acute right diaphragm spasm"]},
+  {abbr:"BiPAP", meaning:"bilevel positive airway pressure",       distractors:["bilateral pulmonary airway procedure","bronchial inspiratory positive air pump","bilateral positive alveolar pressure"]},
+  {abbr:"C&S",   meaning:"culture and sensitivity",                distractors:["cough and sputum","chest and spirometry","consolidation and stenosis"]},
+  {abbr:"CAP",   meaning:"community-acquired pneumonia",           distractors:["chronic airway pathology","costal airway pressure","combined alveolar pneumonitis"]},
+  {abbr:"CF",    meaning:"cystic fibrosis",                        distractors:["costal function","chronic fatigue","capillary flow"]},
+  {abbr:"CO\u2082", meaning:"carbon dioxide",                      distractors:["carbon monoxide","chronic obstruction index 2","costal output index"]},
+  {abbr:"COPD",  meaning:"chronic obstructive pulmonary disease",  distractors:["continuous oxygen pulmonary disorder","community-onset pulmonary disease","chronic obstructive pleural disorder"]},
+  {abbr:"CPAP",  meaning:"continuous positive airway pressure",    distractors:["costal pulmonary airway procedure","chest physiotherapy airway pump","chronic positive alveolar pressure"]},
+  {abbr:"CPT",   meaning:"chest physiotherapy",                    distractors:["continuous pulmonary treatment","costal pressure technique","computed pulmonary tomography"]},
+  {abbr:"CT",    meaning:"computed tomography",                    distractors:["chest therapy","continuous treatment","capillary test"]},
+  {abbr:"CXR",   meaning:"chest x-ray",                           distractors:["costal x-ray report","chronic x-ray","computed x-ray reading"]},
+  {abbr:"DPI",   meaning:"dry powder inhaler",                     distractors:["deep pulmonary index","diaphragm pressure indicator","direct pulmonary infusion"]},
+  {abbr:"flu",   meaning:"influenza",                              distractors:["fluid accumulation in lungs","fluctuating lung uptake","fibrotic lung ulceration"]},
+  {abbr:"IPF",   meaning:"idiopathic pulmonary fibrosis",          distractors:["intermittent pulmonary failure","inflammatory pleural fibrosis","inspiratory peak flow"]},
+  {abbr:"IPPB",  meaning:"intermittent positive-pressure breathing",distractors:["inspiratory pulmonary pressure balance","internal positive pleural breathing","intermittent pulmonary pressure balance"]},
+  {abbr:"LLL",   meaning:"left lower lobe",                        distractors:["left lung lining","lower left larynx","lateral lower lung"]},
+  {abbr:"LTB",   meaning:"laryngotracheobronchitis",               distractors:["lower tracheal bronchitis","laryngeal tracheal block","left thoracic breathing"]},
+  {abbr:"LUL",   meaning:"left upper lobe",                        distractors:["left urinary lining","lateral upper larynx","lower upper lung"]},
+  {abbr:"MDI",   meaning:"metered-dose inhaler",                   distractors:["manual diaphragm inflation","monitored deep inspiration","measured dose index"]},
+  {abbr:"NIPPV", meaning:"non-invasive positive-pressure ventilator",distractors:["nasal intermittent positive pulmonary ventilation","non-invasive pleural pressure ventilator","nasal inspiratory positive pressure volume"]},
+  {abbr:"O\u2082",meaning:"oxygen",                               distractors:["ozone","osmotic output","oxidized airflow"]},
+  {abbr:"OSA",   meaning:"obstructive sleep apnea",                distractors:["oxygen saturation assessment","obstructive sinus anatomy","oral sleep airway"]},
+  {abbr:"PE",    meaning:"pulmonary embolism",                     distractors:["pleural effusion","pulmonary edema","pharyngeal enlargement"]},
+  {abbr:"PEP",   meaning:"positive expiratory pressure",           distractors:["peak expiratory performance","pulmonary end pressure","pharyngeal expiratory procedure"]},
+  {abbr:"PFM",   meaning:"peak flow meter",                        distractors:["pulmonary function monitor","pleural fluid measurement","positive flow mechanism"]},
+  {abbr:"PFTs",  meaning:"pulmonary function tests",               distractors:["positive flow techniques","peak flow thresholds","pleural fluid tests"]},
+  {abbr:"RLL",   meaning:"right lower lobe",                       distractors:["right lung lining","right lateral larynx","rear lower lobe"]},
+  {abbr:"RML",   meaning:"right middle lobe",                      distractors:["right medial lung","respiratory middle line","rear middle lobe"]},
+  {abbr:"RUL",   meaning:"right upper lobe",                       distractors:["right urinary lining","respiratory upper lumen","rear upper lobe"]},
+  {abbr:"SOB",   meaning:"shortness of breath",                    distractors:["severity of bronchitis","spasm of bronchioles","stenosis of bronchus"]},
+  {abbr:"SVN",   meaning:"small-volume nebulizer",                 distractors:["sterile ventilation nebulizer","slow-volume nasal","standard ventilator nozzle"]},
+  {abbr:"TB",    meaning:"tuberculosis",                           distractors:["tracheal blockage","thoracic bronchitis","tidal breathing"]},
+  {abbr:"URI",   meaning:"upper respiratory infection",            distractors:["urinary respiratory irritation","unilateral respiratory inflammation","upper right intercostal"]},
+  {abbr:"VAP",   meaning:"ventilator-associated pneumonia",        distractors:["viral airway pathology","vascular alveolar pressure","venous airway procedure"]}
+];
+
+var jarColors=[
+  {body:'#dbeafe',cap:'#93c5fd',shine:'#bfdbfe',stroke:'#3b82f6'},
+  {body:'#fce7f3',cap:'#f9a8d4',shine:'#fbcfe8',stroke:'#ec4899'},
+  {body:'#dcfce7',cap:'#86efac',shine:'#bbf7d0',stroke:'#22c55e'},
+  {body:'#fef9c3',cap:'#fde047',shine:'#fef08a',stroke:'#eab308'}
+];
+
+var tIdx=0,totalScore=0,draggedJar=null,answered=false,streakHistory=[];
+
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+
+function startActivity(){tIdx=0;totalScore=0;streakHistory=[];showScreen('screen-activity');renderQuestion();}
+
+function updateHeader(){
+  document.getElementById('word-counter').textContent='Question '+(tIdx+1)+' of '+terms.length;
+  document.getElementById('prog-fill').style.width=Math.round(((tIdx+1)/terms.length)*100)+'%';
+  var sb=document.getElementById('streak-bar');sb.innerHTML='';
+  var show=Math.min(streakHistory.length,10);
+  for(var i=streakHistory.length-show;i<streakHistory.length;i++){
+    var d=document.createElement('div');d.className='streak-dot '+(streakHistory[i]?'correct':'wrong');sb.appendChild(d);
+  }
+}
+
+function renderQuestion(){
+  answered=false;draggedJar=null;updateHeader();
+  var term=terms[tIdx];
+  var options=shuffle([term.meaning].concat(term.distractors));
+  var correctIdx=options.indexOf(term.meaning);
+  var jarsHtml='';
+  for(var i=0;i<4;i++){
+    var c=jarColors[i];
+    jarsHtml+='<div class="jar-wrap" onclick="jarClick('+i+')">'+
+      '<div class="jar-drop" id="jar-'+i+'" data-idx="'+i+'" data-correct="'+(i===correctIdx?'1':'0')+'"></div>'+
+      '<svg class="jar-svg" viewBox="0 0 110 90" xmlns="http://www.w3.org/2000/svg">'+
+        '<rect x="28" y="6" width="54" height="13" rx="5" fill="'+c.cap+'" stroke="'+c.stroke+'" stroke-width="2"/>'+
+        '<rect x="18" y="19" width="74" height="62" rx="10" fill="'+c.body+'" stroke="'+c.stroke+'" stroke-width="2"/>'+
+        '<rect x="20" y="21" width="70" height="16" rx="5" fill="'+c.shine+'" opacity="0.7"/>'+
+        '<ellipse cx="55" cy="75" rx="32" ry="5" fill="'+c.shine+'" opacity="0.5"/>'+
+        '<line x1="30" y1="55" x2="80" y2="55" stroke="'+c.stroke+'" stroke-width="1" opacity="0.3"/>'+
+        '<line x1="30" y1="65" x2="80" y2="65" stroke="'+c.stroke+'" stroke-width="1" opacity="0.2"/>'+
+      '</svg>'+
+      '<div class="jar-label">'+options[i]+'</div>'+
+    '</div>';
+  }
+  document.getElementById('phase-container').innerHTML=
+    '<div class="abbr-wrap"><div class="abbr-label">🔬 Abbreviation</div><div class="abbr-box">'+term.abbr+'</div></div>'+
+    '<p class="instr-line">💊 Drag the pill — or tap a jar — to match the correct meaning</p>'+
+    '<div class="pill-area"><div class="pill" id="the-pill" draggable="true">Rx</div></div>'+
+    '<div class="jars-row">'+jarsHtml+'</div>'+
+    '<div class="feedback" id="fb"></div>'+
+    '<div class="btn-row"><button class="btn" onclick="resetDrop()">🔄 Reset</button><button class="btn btn-primary" onclick="checkAnswer()">✓ Check Answer</button></div>';
+  setupDragDrop();
+}
+
+function setupDragDrop(){
+  var pill=document.getElementById('the-pill');
+  pill.addEventListener('dragstart',function(e){pill.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  pill.addEventListener('dragend',function(){pill.classList.remove('dragging');});
+  document.querySelectorAll('.jar-drop').forEach(function(jar){
+    jar.addEventListener('dragover',function(e){e.preventDefault();jar.classList.add('drag-over');});
+    jar.addEventListener('dragleave',function(){jar.classList.remove('drag-over');});
+    jar.addEventListener('drop',function(e){e.preventDefault();jar.classList.remove('drag-over');placePill(jar.dataset.idx);});
+  });
+  pill.addEventListener('touchstart',function(){pill.classList.add('dragging');},{passive:true});
+  pill.addEventListener('touchend',function(e){
+    pill.classList.remove('dragging');
+    var touch=e.changedTouches[0];
+    var el=document.elementFromPoint(touch.clientX,touch.clientY);
+    var jar=el?el.closest('.jar-drop'):null;
+    if(jar)placePill(jar.dataset.idx);
+  },{passive:true});
+}
+
+function jarClick(idx){if(!answered)placePill(idx);}
+
+function placePill(idx){
+  if(answered)return;
+  document.querySelectorAll('.jar-drop').forEach(function(j){j.innerHTML='';});
+  draggedJar=idx;
+  var jar=document.getElementById('jar-'+idx);
+  var dp=document.createElement('div');dp.className='dropped-pill';dp.textContent='Rx';
+  jar.appendChild(dp);
+  document.getElementById('the-pill').classList.add('placed');
+}
+
+function resetDrop(){
+  if(answered)return;
+  draggedJar=null;
+  document.querySelectorAll('.jar-drop').forEach(function(j){j.innerHTML='';});
+  var pill=document.getElementById('the-pill');if(pill)pill.classList.remove('placed');
+  var fb=document.getElementById('fb');if(fb){fb.className='feedback';fb.textContent='';}
+}
+
+function checkAnswer(){
+  if(answered)return;
+  if(draggedJar===null){var fb=document.getElementById('fb');fb.className='feedback err show';fb.textContent='💊 Drag the pill to a jar first!';return;}
+  answered=true;
+  var jar=document.getElementById('jar-'+draggedJar);
+  var correct=jar.dataset.correct==='1';
+  var isLast=tIdx>=terms.length-1;
+  if(correct){
+    totalScore++;streakHistory.push(true);jar.classList.add('correct-drop');
+    var fb=document.getElementById('fb');fb.className='feedback ok show';fb.textContent='✅ Correct! Great job!';
+    spawnConfetti();
+  } else {
+    streakHistory.push(false);jar.classList.add('wrong-drop');
+    document.querySelectorAll('.jar-drop').forEach(function(j){if(j.dataset.correct==='1')j.classList.add('correct-drop');});
+    var fb=document.getElementById('fb');fb.className='feedback err show';fb.textContent='❌ Not quite — the correct answer is highlighted in green.';
+  }
+  document.querySelector('.btn-row').innerHTML='<button class="btn btn-primary" onclick="nextTerm()">'+(isLast?'🏆 See Results':'Next →')+'</button>';
+}
+
+function nextTerm(){tIdx++;if(tIdx>=terms.length)renderResults();else renderQuestion();}
+
+function spawnConfetti(){
+  var colors=['#3b82f6','#ec4899','#22c55e','#eab308','#a855f7','#ef4444','#06b6d4'];
+  var wrap=document.createElement('div');wrap.className='confetti-wrap';document.body.appendChild(wrap);
+  for(var i=0;i<30;i++){
+    var p=document.createElement('div');p.className='confetti-piece';
+    p.style.left=Math.random()*100+'%';p.style.top=Math.random()*40+'%';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay=Math.random()*0.4+'s';
+    p.style.transform='rotate('+Math.random()*360+'deg)';
+    wrap.appendChild(p);
+  }
+  setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},1300);
+}
+
+function renderResults(){
+  var pct=Math.round((totalScore/terms.length)*100);
+  var emoji=pct>=90?'🏆':pct>=70?'🎉':pct>=50?'💪':'📚';
+  var msg=pct>=80?'Excellent! You have a strong grasp of these abbreviations.':pct>=60?'Good effort — review the ones you missed and try again.':'Keep practicing — you\'re building your medical vocabulary!';
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('final-pct').textContent=pct+'%';
+  document.getElementById('final-msg').innerHTML=msg+'<br><span style="font-size:13px;color:#6b7280;font-weight:700;">'+totalScore+' of '+terms.length+' correct</span>';
+  var html='';
+  for(var i=0;i<terms.length;i++){var t=terms[i];html+='<div class="scard"><h4>'+t.abbr+'</h4><div class="smean">'+t.meaning+'</div></div>';}
+  document.getElementById('summary-cards').innerHTML=html;
+  showScreen('screen-results');
+  if(pct>=70)spawnConfetti();
+}
+
+function restart(){tIdx=0;totalScore=0;streakHistory=[];showScreen('screen-welcome');}
+</script>
+</body>
+</html>
